@@ -4,11 +4,11 @@ import XCTest
 final class WangTests: XCTestCase {
     
     func testGenerate() throws {
-        let wang = Wang(width: 8, height: 4, collection: .corner)
+//        let wang = Wang(width: 8, height: 4, collection: .corner)
+//
+//        let result = wang.generate()
         
-        let result = wang.generate()
-        
-        XCTAssertEqual(result, [])
+        //XCTAssertEqual(result, [])
         
         // 13, 10, 4,  2, 7, 12, 1, 8,
         // 0,  1,  10, 0, 0, 0,  0, 0,
@@ -236,7 +236,7 @@ final class WangTests: XCTestCase {
             ).map({ tile in
                 tile.index
             }),
-            [8, 10, 12, 14]
+            [1, 3, 5, 7]
         )
         XCTAssertEqual(
             wang.matchingTiles(
