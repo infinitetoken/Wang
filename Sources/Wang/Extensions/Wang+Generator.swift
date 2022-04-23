@@ -73,8 +73,8 @@ extension Wang {
             case .corner:
                 return []
             case .edge:
-                guard let eastMask = Cardinal.east.mask(for: .edge) else { return [] }
-                guard let westMask = Cardinal.west.mask(for: .edge) else { return [] }
+                guard let eastMask = Cardinal.west.mask(for: .edge) else { return [] }
+                guard let westMask = Cardinal.east.mask(for: .edge) else { return [] }
                 
                 return values.filter { value in
                     if (value & eastMask) == eastMask {
@@ -91,8 +91,8 @@ extension Wang {
             case .corner:
                 return []
             case .edge:
-                guard let southMask = Cardinal.south.mask(for: .edge) else { return [] }
-                guard let northMask = Cardinal.north.mask(for: .edge) else { return [] }
+                guard let southMask = Cardinal.north.mask(for: .edge) else { return [] }
+                guard let northMask = Cardinal.south.mask(for: .edge) else { return [] }
                 
                 return values.filter { value in
                     if (value & southMask) == southMask {
