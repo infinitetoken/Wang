@@ -3,6 +3,15 @@ import XCTest
 
 final class WangTests: XCTestCase {
     
+    func testMatchingValues() throws {
+        let wang = Wang(width: 1, height: 1, collection: .edge)
+        let candidates: [UInt8] = Array(0..<16)
+        
+        let matches = wang.matchingValues(for: 7, axis: .horizontal, collection: .edge, in: candidates)
+        
+        XCTAssertEqual(matches, [8, 9, 10, 11, 12, 13, 14, 15])
+    }
+    
     func testCardinalHorizontalFlipped() throws {
         
         // Blob Set
