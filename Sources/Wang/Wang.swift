@@ -12,22 +12,16 @@ public struct Wang: Identifiable, Equatable, Codable {
     
     // MARK: - Enumerations
     
-    public enum Axis {
+    internal enum Axis {
         case horizontal
         case vertical
     }
     
-    public enum Cardinal: UInt8 {
-        case north = 1
-        case northeast = 2
-        case east = 4
-        case southeast = 8
-        case south = 16
-        case southwest = 32
-        case west = 64
-        case northwest = 128
-        
-        public var value: UInt8 { return rawValue }
+    internal enum Cardinal {
+        case north
+        case east
+        case south
+        case west
     }
     
     public enum Collection: String, Codable, CaseIterable {
@@ -36,6 +30,30 @@ public struct Wang: Identifiable, Equatable, Codable {
         case edge = "Edge"
         
         public var name: String { return rawValue }
+    }
+    
+    // MARK: - Structs
+    
+    internal struct Tile {
+        var index: UInt8
+        
+        var north: UInt8
+        var east: UInt8
+        var south: UInt8
+        var west: UInt8
+        
+        func value(for cardinal: Cardinal) -> UInt8 {
+            switch cardinal {
+            case .north:
+                return north
+            case .east:
+                return east
+            case .south:
+                return south
+            case .west:
+                return west
+            }
+        }
     }
     
     // MARK: - Properties
@@ -62,43 +80,52 @@ extension Wang {
     }
 
     internal func generate(seed: UInt8?, width: UInt, height: UInt, collection: Collection) -> [UInt8] {
-        var tileIndexes: [UInt8] = []
+        var tileIndexes: [Tile] = []
         
         for row in 0..<height {
             for column in 0..<width {
                 let index = (row * width) + column
 
-                let westValue = self.tileValue(for: index, axis: .horizontal, width: width, in: tileIndexes)
-                let northValue = self.tileValue(for: index, axis: .vertical, width: width, in: tileIndexes)
+                let westTile = self.tile(for: index, axis: .horizontal, width: width, in: tileIndexes)
+                let northTile = self.tile(for: index, axis: .vertical, width: width, in: tileIndexes)
 
-                tileIndexes.append(self.generateMatchingValue(westValue: westValue, northValue: northValue, seed: seed, collection: collection))
+                tileIndexes.append(
+                    self.generateMatchingTile(
+                        westTile: westTile,
+                        northTile: northTile,
+                        seed: seed,
+                        collection: collection
+                    )
+                )
             }
         }
         
-        return tileIndexes
-    }
-    
-    internal func generateMatchingValue(westValue: UInt8?, northValue: UInt8?, seed: UInt8?, collection: Collection) -> UInt8 {
-        switch collection {
-        case .blob:
-            return 0
-        case .corner, .edge:
-            if westValue == nil && northValue == nil { return (0..<16).randomElement() ?? 0 }
-            
-            var candidates: [UInt8] = Array(0..<16)
-    
-            if let westValue = westValue {
-                candidates = self.matchingValues(for: westValue, axis: .horizontal, collection: collection, in: candidates)
-            }
-            if let northValue = northValue {
-                candidates = self.matchingValues(for: northValue, axis: .vertical, collection: collection, in: candidates)
-            }
-    
-            return candidates.randomElement() ?? 0
+        return tileIndexes.map { tile in
+            tile.index
         }
     }
     
-    internal func tileValue(for index: UInt, axis: Axis, width: UInt, in tileIndexes: [UInt8]) -> UInt8? {
+    internal func generateMatchingTile(westTile: Tile?, northTile: Tile?, seed: UInt8?, collection: Collection) -> Tile {
+        switch collection {
+        case .blob:
+            return Tile(index: 0, north: 0, east: 0, south: 0, west: 0)
+        case .corner, .edge:
+            if westTile == nil && northTile == nil { return collection.tiles.randomElement() ?? Tile(index: 0, north: 0, east: 0, south: 0, west: 0) }
+            
+            var candidates: [Tile] = collection.tiles
+    
+            if let westTile = westTile {
+                candidates = self.matchingValues(for: westTile, axis: .horizontal, collection: collection, in: candidates)
+            }
+            if let northTile = northTile {
+                candidates = self.matchingValues(for: northTile, axis: .vertical, collection: collection, in: candidates)
+            }
+    
+            return candidates.randomElement() ?? Tile(index: 0, north: 0, east: 0, south: 0, west: 0)
+        }
+    }
+    
+    internal func tile(for index: UInt, axis: Axis, width: UInt, in tileIndexes: [Tile]) -> Tile? {
         guard index > 0 else { return nil }
         
         switch axis {
@@ -109,82 +136,17 @@ extension Wang {
         }
     }
     
-    internal func matchingValues(for value: UInt8, axis: Axis, collection: Collection, in candidates: [UInt8]) -> [UInt8] {
+    internal func matchingValues(for tile: Tile, axis: Axis, collection: Collection, in candidates: [Tile]) -> [Tile] {
         switch axis {
         case .horizontal:
-            switch collection {
-            case .blob:
-                return []
-            case .corner:
-                guard let northeastMask = Cardinal.northeast.mask(for: .corner) else { return [] }
-                guard let southeastMask = Cardinal.southeast.mask(for: .corner) else { return [] }
-                guard let northwestMask = Cardinal.northwest.mask(for: .corner) else { return [] }
-                guard let southwestMask = Cardinal.southwest.mask(for: .corner) else { return [] }
-                
-                return candidates.filter { candidate in
-                    if (value & (northeastMask | southeastMask)) == (northeastMask | southeastMask) {
-                        return (candidate & northwestMask) == northwestMask && (candidate & southwestMask) == southwestMask
-                    } else {
-                        return (candidate & northwestMask) != northwestMask && (candidate & southwestMask) != southwestMask
-                    }
-                }
-            case .edge:
-                guard let eastMask = Cardinal.east.mask(for: .edge) else { return [] }
-                guard let westMask = Cardinal.west.mask(for: .edge) else { return [] }
-                
-                return candidates.filter { candidate in
-                    if (value & eastMask) == eastMask {
-                        return (candidate & westMask) == westMask
-                    } else {
-                        return (candidate & westMask) != westMask
-                    }
-                }
+            return candidates.filter { candidate in
+                return candidate.west == tile.east
             }
         case .vertical:
-            switch collection {
-            case .blob:
-                return []
-            case .corner:
-                guard let southeastMask = Cardinal.southeast.mask(for: .corner) else { return [] }
-                guard let southwestMask = Cardinal.southwest.mask(for: .corner) else { return [] }
-                guard let northeastMask = Cardinal.northeast.mask(for: .corner) else { return [] }
-                guard let northwestMask = Cardinal.northwest.mask(for: .corner) else { return [] }
-                
-                return candidates.filter { candidate in
-                    if (value & (southeastMask | southwestMask)) == (southeastMask | southwestMask) {
-                        return (candidate & northeastMask) == northeastMask && (candidate & northwestMask) == northwestMask
-                    } else {
-                        return (candidate & northeastMask) != northeastMask && (candidate & northwestMask) != northwestMask
-                    }
-                }
-            case .edge:
-                guard let southMask = Cardinal.south.mask(for: .edge) else { return [] }
-                guard let northMask = Cardinal.north.mask(for: .edge) else { return [] }
-                
-                return candidates.filter { candidate in
-                    if (value & southMask) == southMask {
-                        return (candidate & northMask) == northMask
-                    } else {
-                        return (candidate & northMask) != northMask
-                    }
-                }
+            return candidates.filter { candidate in
+                return candidate.north == tile.south
             }
         }
     }
-    
-//    internal func filteredValues(collection: Collection, matchingValue: UInt8, cardinal: Cardinal, in values: [UInt8]) -> [UInt8] {
-//        guard let directionMask = cardinal.mask(for: style) else { return [] }
-//        guard let reversedMask = cardinal.reversed.mask(for: style) else { return [] }
-//
-//        let candidates = values.filter { value in
-//            if (matchingValue & directionMask) == directionMask {
-//                return (value & reversedMask) != reversedMask
-//            } else {
-//                return (value & reversedMask) == reversedMask
-//            }
-//        }
-//
-//        return candidates
-//    }
     
 }
