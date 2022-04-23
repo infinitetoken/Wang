@@ -82,9 +82,7 @@ extension Wang {
         switch collection {
         case .blob:
             return 0
-        case .corner:
-            return 0
-        case .edge:
+        case .corner, .edge:
             if westValue == nil && northValue == nil { return (0..<16).randomElement() ?? 0 }
             
             var candidates: [UInt8] = Array(0..<16)
@@ -118,7 +116,18 @@ extension Wang {
             case .blob:
                 return []
             case .corner:
-                return []
+                guard let northeastMask = Cardinal.northeast.mask(for: .corner) else { return [] }
+                guard let southeastMask = Cardinal.southeast.mask(for: .corner) else { return [] }
+                guard let northwestMask = Cardinal.northwest.mask(for: .corner) else { return [] }
+                guard let southwestMask = Cardinal.southwest.mask(for: .corner) else { return [] }
+                
+                return candidates.filter { candidate in
+                    if (value & (northeastMask | southeastMask)) == (northeastMask | southeastMask) {
+                        return (candidate & northwestMask) == northwestMask && (candidate & southwestMask) == southwestMask
+                    } else {
+                        return (candidate & northwestMask) != northwestMask && (candidate & southwestMask) != southwestMask
+                    }
+                }
             case .edge:
                 guard let eastMask = Cardinal.east.mask(for: .edge) else { return [] }
                 guard let westMask = Cardinal.west.mask(for: .edge) else { return [] }
@@ -136,7 +145,18 @@ extension Wang {
             case .blob:
                 return []
             case .corner:
-                return []
+                guard let southeastMask = Cardinal.southeast.mask(for: .corner) else { return [] }
+                guard let southwestMask = Cardinal.southwest.mask(for: .corner) else { return [] }
+                guard let northeastMask = Cardinal.northeast.mask(for: .corner) else { return [] }
+                guard let northwestMask = Cardinal.northwest.mask(for: .corner) else { return [] }
+                
+                return candidates.filter { candidate in
+                    if (value & (southeastMask | southwestMask)) == (southeastMask | southwestMask) {
+                        return (candidate & northeastMask) == northeastMask && (candidate & northwestMask) == northwestMask
+                    } else {
+                        return (candidate & northeastMask) != northeastMask && (candidate & northwestMask) != northwestMask
+                    }
+                }
             case .edge:
                 guard let southMask = Cardinal.south.mask(for: .edge) else { return [] }
                 guard let northMask = Cardinal.north.mask(for: .edge) else { return [] }

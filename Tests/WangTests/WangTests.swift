@@ -3,13 +3,155 @@ import XCTest
 
 final class WangTests: XCTestCase {
     
-    func testMatchingValues() throws {
+    func testMatchingCornerValues() throws {
+        let wang = Wang(width: 1, height: 1, collection: .corner)
+        let candidates: [UInt8] = Array(0..<16)
+        
+        // Horizontal
+        
+        XCTAssertEqual(
+            wang.matchingValues(for: 0, axis: .horizontal, collection: .corner, in: candidates),
+            [0, 1, 2, 3]
+        )
+    }
+    
+    func testMatchingEdgeValues() throws {
         let wang = Wang(width: 1, height: 1, collection: .edge)
         let candidates: [UInt8] = Array(0..<16)
         
-        let matches = wang.matchingValues(for: 7, axis: .horizontal, collection: .edge, in: candidates)
+        // Horizontal
         
-        XCTAssertEqual(matches, [8, 9, 10, 11, 12, 13, 14, 15])
+        XCTAssertEqual(
+            wang.matchingValues(for: 0, axis: .horizontal, collection: .edge, in: candidates),
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 1, axis: .horizontal, collection: .edge, in: candidates),
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 2, axis: .horizontal, collection: .edge, in: candidates),
+            [8, 9, 10, 11, 12, 13, 14, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 3, axis: .horizontal, collection: .edge, in: candidates),
+            [8, 9, 10, 11, 12, 13, 14, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 4, axis: .horizontal, collection: .edge, in: candidates),
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 5, axis: .horizontal, collection: .edge, in: candidates),
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 6, axis: .horizontal, collection: .edge, in: candidates),
+            [8, 9, 10, 11, 12, 13, 14, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 7, axis: .horizontal, collection: .edge, in: candidates),
+            [8, 9, 10, 11, 12, 13, 14, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 8, axis: .horizontal, collection: .edge, in: candidates),
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 9, axis: .horizontal, collection: .edge, in: candidates),
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 10, axis: .horizontal, collection: .edge, in: candidates),
+            [8, 9, 10, 11, 12, 13, 14, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 11, axis: .horizontal, collection: .edge, in: candidates),
+            [8, 9, 10, 11, 12, 13, 14, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 12, axis: .horizontal, collection: .edge, in: candidates),
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 13, axis: .horizontal, collection: .edge, in: candidates),
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 14, axis: .horizontal, collection: .edge, in: candidates),
+            [8, 9, 10, 11, 12, 13, 14, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 15, axis: .horizontal, collection: .edge, in: candidates),
+            [8, 9, 10, 11, 12, 13, 14, 15]
+        )
+        
+        // Vertical
+        
+        XCTAssertEqual(
+            wang.matchingValues(for: 0, axis: .vertical, collection: .edge, in: candidates),
+            [0, 2, 4, 6, 8, 10, 12, 14]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 1, axis: .vertical, collection: .edge, in: candidates),
+            [0, 2, 4, 6, 8, 10, 12, 14]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 2, axis: .vertical, collection: .edge, in: candidates),
+            [0, 2, 4, 6, 8, 10, 12, 14]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 3, axis: .vertical, collection: .edge, in: candidates),
+            [0, 2, 4, 6, 8, 10, 12, 14]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 4, axis: .vertical, collection: .edge, in: candidates),
+            [1, 3, 5, 7, 9, 11, 13, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 5, axis: .vertical, collection: .edge, in: candidates),
+            [1, 3, 5, 7, 9, 11, 13, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 6, axis: .vertical, collection: .edge, in: candidates),
+            [1, 3, 5, 7, 9, 11, 13, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 7, axis: .vertical, collection: .edge, in: candidates),
+            [1, 3, 5, 7, 9, 11, 13, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 8, axis: .vertical, collection: .edge, in: candidates),
+            [0, 2, 4, 6, 8, 10, 12, 14]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 9, axis: .vertical, collection: .edge, in: candidates),
+            [0, 2, 4, 6, 8, 10, 12, 14]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 10, axis: .vertical, collection: .edge, in: candidates),
+            [0, 2, 4, 6, 8, 10, 12, 14]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 11, axis: .vertical, collection: .edge, in: candidates),
+            [0, 2, 4, 6, 8, 10, 12, 14]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 12, axis: .vertical, collection: .edge, in: candidates),
+            [1, 3, 5, 7, 9, 11, 13, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 13, axis: .vertical, collection: .edge, in: candidates),
+            [1, 3, 5, 7, 9, 11, 13, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 14, axis: .vertical, collection: .edge, in: candidates),
+            [1, 3, 5, 7, 9, 11, 13, 15]
+        )
+        XCTAssertEqual(
+            wang.matchingValues(for: 15, axis: .vertical, collection: .edge, in: candidates),
+            [1, 3, 5, 7, 9, 11, 13, 15]
+        )
     }
     
     func testCardinalHorizontalFlipped() throws {
