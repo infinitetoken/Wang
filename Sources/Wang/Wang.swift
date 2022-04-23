@@ -88,7 +88,12 @@ extension Wang {
             for column in 0..<width {
                 let index = (row * width) + column
 
-                let westTile = self.tile(for: index, axis: .horizontal, width: width, in: tileIndexes)
+                var westTile: Tile? = nil
+                
+                if column != 0 {
+                    westTile = self.tile(for: index, axis: .horizontal, width: width, in: tileIndexes)
+                }
+                
                 let northTile = self.tile(for: index, axis: .vertical, width: width, in: tileIndexes)
 
                 tileIndexes.append(
