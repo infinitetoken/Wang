@@ -14,7 +14,6 @@ final class WangTests: XCTestCase {
         // 0,  1,  10, 0, 0, 0,  0, 0,
         // 0,  2,  7,  0, 0, 2,  6, 6,
         // 4,  0,  0,  0, 0, 0,  0, 0
-        
     }
     
     func testMatchingHorizontalCornerTiles() throws {
