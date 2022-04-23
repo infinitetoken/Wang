@@ -19,20 +19,20 @@ extension Wang.Collection {
                 Wang.Tile(index: 0, north: 0b00, east: 0b00, south: 0b00, west: 0b00),
                 Wang.Tile(index: 1, north: 0b01, east: 0b10, south: 0b00, west: 0b00),
                 Wang.Tile(index: 2, north: 0b00, east: 0b01, south: 0b10, west: 0b00),
-                Wang.Tile(index: 3, north: 0b01, east: 0b11, south: 0b10, west: 0b00),
+                Wang.Tile(index: 3, north: 0b01, east: 0b11, south: 0b01, west: 0b00),
 
-                Wang.Tile(index: 4, north: 0b00, east: 0b00, south: 0b01, west: 0b10),
-                Wang.Tile(index: 5, north: 0b01, east: 0b10, south: 0b01, west: 0b10),
-                Wang.Tile(index: 6, north: 0b00, east: 0b01, south: 0b11, west: 0b10),
-                Wang.Tile(index: 7, north: 0b01, east: 0b11, south: 0b11, west: 0b10),
+                Wang.Tile(index: 4, north: 0b00, east: 0b00, south: 0b10, west: 0b01),
+                Wang.Tile(index: 5, north: 0b01, east: 0b10, south: 0b10, west: 0b01),
+                Wang.Tile(index: 6, north: 0b00, east: 0b01, south: 0b11, west: 0b01),
+                Wang.Tile(index: 7, north: 0b01, east: 0b11, south: 0b11, west: 0b01),
                 
-                Wang.Tile(index: 8, north: 0b10, east: 0b00, south: 0b00, west: 0b01),
-                Wang.Tile(index: 9, north: 0b11, east: 0b10, south: 0b00, west: 0b01),
-                Wang.Tile(index: 10, north: 0b10, east: 0b01, south: 0b10, west: 0b01),
-                Wang.Tile(index: 11, north: 0b11, east: 0b11, south: 0b10, west: 0b01),
+                Wang.Tile(index: 8, north: 0b10, east: 0b00, south: 0b00, west: 0b10),
+                Wang.Tile(index: 9, north: 0b11, east: 0b10, south: 0b00, west: 0b10),
+                Wang.Tile(index: 10, north: 0b10, east: 0b01, south: 0b01, west: 0b10),
+                Wang.Tile(index: 11, north: 0b11, east: 0b11, south: 0b01, west: 0b10),
                 
-                Wang.Tile(index: 12, north: 0b10, east: 0b00, south: 0b01, west: 0b11),
-                Wang.Tile(index: 13, north: 0b11, east: 0b10, south: 0b01, west: 0b11),
+                Wang.Tile(index: 12, north: 0b10, east: 0b00, south: 0b10, west: 0b11),
+                Wang.Tile(index: 13, north: 0b11, east: 0b10, south: 0b10, west: 0b11),
                 Wang.Tile(index: 14, north: 0b10, east: 0b01, south: 0b11, west: 0b11),
                 Wang.Tile(index: 15, north: 0b11, east: 0b11, south: 0b11, west: 0b11)
             ]
