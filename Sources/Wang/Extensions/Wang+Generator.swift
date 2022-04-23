@@ -1,8 +1,9 @@
 //
-//  File.swift
-//  
+//  Wang+Generator.swift
+//  Wang
 //
 //  Created by Aaron Wright on 4/23/22.
+//  Copyright © 2022 Infinite Token LLC. All rights reserved.
 //
 
 import Foundation

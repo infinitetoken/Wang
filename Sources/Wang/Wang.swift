@@ -12,7 +12,12 @@ public struct Wang: Identifiable, Equatable, Codable {
     
     // MARK: - Enumerations
     
-    public enum CardinalDirection: UInt8 {
+    public enum Axis {
+        case horizontal
+        case vertical
+    }
+    
+    public enum Cardinal: UInt8 {
         case north = 1
         case northeast = 2
         case east = 4
