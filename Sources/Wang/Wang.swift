@@ -17,7 +17,7 @@ public struct Wang: Identifiable, Equatable, Codable {
         case vertical
     }
     
-    internal enum Cardinal {
+    public enum Cardinal {
         case north
         case east
         case south
@@ -34,33 +34,27 @@ public struct Wang: Identifiable, Equatable, Codable {
     
     // MARK: - Structs
     
-    internal struct Tile: Identifiable, Equatable {
-        var index: UInt8
+    public struct Tile: Identifiable, Equatable {
+        public var index: UInt8
+        public var value: UInt8
         
-        var north: UInt8
-        var east: UInt8
-        var south: UInt8
-        var west: UInt8
+        public var north: UInt8
+        public var east: UInt8
+        public var south: UInt8
+        public var west: UInt8
         
-        var id: UInt8 { return index }
+        public var rotation: Wang.Cardinal = .north
         
-        func value(for cardinal: Cardinal) -> UInt8 {
-            switch cardinal {
-            case .north:
-                return north
-            case .east:
-                return east
-            case .south:
-                return south
-            case .west:
-                return west
-            }
+        public var id: UInt8 { return value }
+        
+        public static var zero: Tile {
+            return Tile(index: 0, value: 0, north: 0, east: 0, south: 0, west: 0)
         }
     }
     
     // MARK: - Properties
     
-    public var collection: Collection
+    public var collection: Wang.Collection
     public var height: UInt
     public var id: UUID = UUID()
     public var width: UInt
@@ -77,18 +71,18 @@ public struct Wang: Identifiable, Equatable, Codable {
 
 extension Wang {
     
-    public func generate(seed: UInt8? = nil) -> [UInt8] {
+    public func generate(seed: UInt8? = nil) -> [Wang.Tile] {
         self.generate(seed: seed, width: self.width, height: self.height, collection: self.collection)
     }
 
-    internal func generate(seed: UInt8?, width: UInt, height: UInt, collection: Collection) -> [UInt8] {
-        var tileIndexes: [Tile] = []
+    internal func generate(seed: UInt8?, width: UInt, height: UInt, collection: Wang.Collection) -> [Wang.Tile] {
+        var tileIndexes: [Wang.Tile] = []
         
         for row in 0..<height {
             for column in 0..<width {
                 let index = (row * width) + column
 
-                var westTile: Tile? = nil
+                var westTile: Wang.Tile? = nil
                 
                 if column != 0 {
                     westTile = self.tile(for: index, axis: .horizontal, width: width, in: tileIndexes)
@@ -107,15 +101,13 @@ extension Wang {
             }
         }
         
-        return tileIndexes.map { tile in
-            tile.index
-        }
+        return tileIndexes
     }
     
-    internal func generateMatchingTile(westTile: Tile?, northTile: Tile?, seed: UInt8?, collection: Collection) -> Tile {
-        if westTile == nil && northTile == nil { return collection.tiles.randomElement() ?? Tile(index: 0, north: 0, east: 0, south: 0, west: 0) }
+    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, seed: UInt8?, collection: Wang.Collection) -> Wang.Tile {
+        if westTile == nil && northTile == nil { return collection.tiles.randomElement() ?? Tile.zero }
         
-        var candidates: [Tile] = collection.tiles
+        var candidates: [Wang.Tile] = collection.tiles
 
         if let westTile = westTile {
             candidates = self.matchingTiles(for: westTile, axis: .horizontal, collection: collection, in: candidates)
@@ -124,10 +116,10 @@ extension Wang {
             candidates = self.matchingTiles(for: northTile, axis: .vertical, collection: collection, in: candidates)
         }
 
-        return candidates.randomElement() ?? Tile(index: 0, north: 0, east: 0, south: 0, west: 0)
+        return candidates.randomElement() ?? Wang.Tile.zero
     }
     
-    internal func tile(for index: UInt, axis: Axis, width: UInt, in tileIndexes: [Tile]) -> Tile? {
+    internal func tile(for index: UInt, axis: Wang.Axis, width: UInt, in tileIndexes: [Wang.Tile]) -> Wang.Tile? {
         guard index > 0 else { return nil }
         
         switch axis {
@@ -138,7 +130,7 @@ extension Wang {
         }
     }
     
-    internal func matchingTiles(for tile: Tile, axis: Axis, collection: Collection, in candidates: [Tile]) -> [Tile] {
+    internal func matchingTiles(for tile: Wang.Tile, axis: Wang.Axis, collection: Wang.Collection, in candidates: [Wang.Tile]) -> [Wang.Tile] {
         switch axis {
         case .horizontal:
             return candidates.filter { candidate in
