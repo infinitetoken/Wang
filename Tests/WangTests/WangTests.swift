@@ -4,382 +4,54 @@ import XCTest
 final class WangTests: XCTestCase {
     
     func testGenerate() throws {
-//        let wang = Wang(width: 8, height: 4, collection: .corner)
-//
-//        let result = wang.generate()
+        let wang1 = Wang(width: 4, height: 4, collection: .corner)
+        let result1 = wang1.generate()
         
-        //XCTAssertEqual(result, [])
+        XCTAssertEqual(result1.count, 16)
         
-        // 13, 10, 4,  2, 7, 12, 1, 8,
-        // 0,  1,  10, 0, 0, 0,  0, 0,
-        // 0,  2,  7,  0, 0, 2,  6, 6,
-        // 4,  0,  0,  0, 0, 0,  0, 0
+        let wang2 = Wang(width: 2, height: 2, collection: .edge)
+        let result2 = wang2.generate()
+        
+        XCTAssertEqual(result2.count, 4)
+        
+        let wang3 = Wang(width: 8, height: 8, collection: .blob)
+        let result3 = wang3.generate()
+        
+        XCTAssertEqual(result3.count, 64)
     }
     
-    func testMatchingHorizontalCornerTiles() throws {
-        let wang = Wang(width: 1, height: 1, collection: .corner)
+    func testPsuedoRandomGenerate() throws {
+        let wang1 = Wang(width: 2, height: 2, collection: .edge, seed: 0)
+        let result1 = wang1.generate()
         
-        let tiles = wang.collection.tiles
+        XCTAssertEqual(result1.map({ tile in
+            tile.index
+        }), [0, 1, 2, 8])
         
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[0],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [0, 1, 2, 3]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[1],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [8, 9, 10, 11]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[2],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [4, 5, 6, 7]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[3],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [12, 13, 14, 15]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[4],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [0, 1, 2, 3]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[5],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [8, 9, 10, 11]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[6],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [4, 5, 6, 7]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[7],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [12, 13, 14, 15]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[8],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [0, 1, 2, 3]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[9],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [8, 9, 10, 11]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[10],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [4, 5, 6, 7]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[11],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [12, 13, 14, 15]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[12],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [0, 1, 2, 3]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[13],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [8, 9, 10, 11]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[14],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [4, 5, 6, 7]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[15],
-                axis: .horizontal,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [12, 13, 14, 15]
-        )
+        let wang2 = Wang(width: 4, height: 4, collection: .corner, seed: 0)
+        let result2 = wang2.generate()
+        
+        XCTAssertEqual(result2.map({ tile in
+            tile.index
+        }), [0, 1, 8, 0, 2, 4, 0, 2, 3, 12, 0, 1, 3, 12, 0, 2])
     }
     
-    func testMatchingVerticalCornerTiles() throws {
-        let wang = Wang(width: 1, height: 1, collection: .corner)
+    func testZeroTile() throws {
+        let tile = Wang.Tile.zero
         
-        let tiles = wang.collection.tiles
-        
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[0],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [0, 2, 4, 6]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[1],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [0, 2, 4, 6]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[2],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [1, 3, 5, 7]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[3],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [1, 3, 5, 7]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[4],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [8, 10, 12, 14]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[5],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [8, 10, 12, 14]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[6],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [9, 11, 13, 15]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[7],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [9, 11, 13, 15]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[8],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [0, 2, 4, 6]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[9],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [0, 2, 4, 6]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[10],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [1, 3, 5, 7]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[11],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [1, 3, 5, 7]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[12],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [8, 10, 12, 14]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[13],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [8, 10, 12, 14]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[14],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [9, 11, 13, 15]
-        )
-        XCTAssertEqual(
-            wang.matchingTiles(
-                for: tiles[15],
-                axis: .vertical,
-                collection: wang.collection,
-                in: tiles
-            ).map({ tile in
-                tile.index
-            }),
-            [9, 11, 13, 15]
-        )
+        XCTAssertEqual(tile.index, 0)
+        XCTAssertEqual(tile.value, 0)
+        XCTAssertEqual(tile.north, 0)
+        XCTAssertEqual(tile.east, 0)
+        XCTAssertEqual(tile.south, 0)
+        XCTAssertEqual(tile.west, 0)
+        XCTAssertEqual(tile.id, 0)
+    }
+    
+    func testCollectionName() throws {
+        XCTAssertEqual(Wang.Collection.blob.name, "Blob")
+        XCTAssertEqual(Wang.Collection.corner.name, "Corner")
+        XCTAssertEqual(Wang.Collection.edge.name, "Edge")
     }
     
 }

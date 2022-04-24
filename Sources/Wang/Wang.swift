@@ -57,31 +57,36 @@ public struct Wang: Identifiable, Equatable, Codable {
     public var collection: Wang.Collection
     public var height: UInt
     public var id: UUID = UUID()
+    public var seed: UInt8? = nil
     public var width: UInt
     
     // MARK: - Lifecycle
     
-    public init(width: UInt, height: UInt, collection: Wang.Collection) {
+    public init(width: UInt, height: UInt, collection: Wang.Collection, seed: UInt8? = nil) {
         self.collection = collection
         self.height = height
         self.width = width
+        self.seed = seed
     }
     
 }
 
 extension Wang {
     
-    public func generate(seed: UInt8? = nil) -> [Wang.Tile] {
-        self.generate(seed: seed, width: self.width, height: self.height, collection: self.collection)
+    public func generate() -> [Wang.Tile] {
+        self.generate(width: self.width, height: self.height, collection: self.collection)
     }
 
-    internal func generate(seed: UInt8?, width: UInt, height: UInt, collection: Wang.Collection) -> [Wang.Tile] {
+    internal func generate(width: UInt, height: UInt, collection: Wang.Collection) -> [Wang.Tile] {
         var tileIndexes: [Wang.Tile] = []
+        
+        let tileCount = collection.tiles.count
+        var seed: UInt8 = self.seed ?? 0
         
         for row in 0..<height {
             for column in 0..<width {
                 let index = (row * width) + column
-
+                
                 var westTile: Wang.Tile? = nil
                 
                 if column != 0 {
@@ -90,22 +95,38 @@ extension Wang {
                 
                 let northTile = self.tile(for: index, axis: .vertical, width: width, in: tileIndexes)
 
-                tileIndexes.append(
-                    self.generateMatchingTile(
-                        westTile: westTile,
-                        northTile: northTile,
-                        seed: seed,
-                        collection: collection
-                    )
+                let matchedTile = self.generateMatchingTile(
+                    westTile: westTile,
+                    northTile: northTile,
+                    collection: collection,
+                    seed: self.seed != nil ? seed : nil
                 )
+                
+                if seed < tileCount {
+                    if matchedTile.value < UInt8.max {
+                        seed = matchedTile.value + 1
+                    } else {
+                        seed = 0
+                    }
+                } else {
+                    seed = 0
+                }
+                
+                tileIndexes.append(matchedTile)
             }
         }
         
         return tileIndexes
     }
     
-    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, seed: UInt8?, collection: Wang.Collection) -> Wang.Tile {
-        if westTile == nil && northTile == nil { return collection.tiles.randomElement() ?? Tile.zero }
+    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, collection: Wang.Collection, seed: UInt8?) -> Wang.Tile {
+        if westTile == nil && northTile == nil {
+            if let seed = seed {
+                return collection.tiles[Int(seed)]
+            } else {
+                return collection.tiles.randomElement() ?? Tile.zero
+            }
+        }
         
         var candidates: [Wang.Tile] = collection.tiles
 
@@ -116,7 +137,13 @@ extension Wang {
             candidates = self.matchingTiles(for: northTile, axis: .vertical, collection: collection, in: candidates)
         }
 
-        return candidates.randomElement() ?? Wang.Tile.zero
+        if let seed = seed {
+            return candidates.first { tile in
+                tile.index >= seed
+            } ?? Tile.zero
+        } else {
+            return candidates.randomElement() ?? Tile.zero
+        }
     }
     
     internal func tile(for index: UInt, axis: Wang.Axis, width: UInt, in tileIndexes: [Wang.Tile]) -> Wang.Tile? {
