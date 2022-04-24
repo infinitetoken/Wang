@@ -78,10 +78,19 @@ extension Wang {
     }
 
     internal func generate(width: UInt, height: UInt, collection: Wang.Collection) -> [Wang.Tile] {
-        var tileIndexes: [Wang.Tile] = []
+        var tiles: [Wang.Tile] = []
         
-        let tileCount = collection.tiles.count
-        var seed: UInt8 = self.seed ?? 0
+        let candidates = collection.tiles
+        var seed: UInt8 = 0
+        
+        if let initialSeed = self.seed {
+            switch collection {
+            case .blob:
+                seed = initialSeed % 48
+            case .corner, .edge:
+                seed = initialSeed % 16
+            }
+        }
         
         for row in 0..<height {
             for column in 0..<width {
@@ -90,45 +99,45 @@ extension Wang {
                 var westTile: Wang.Tile? = nil
                 
                 if column != 0 {
-                    westTile = self.tile(for: index, axis: .horizontal, width: width, in: tileIndexes)
+                    westTile = self.tile(for: index, axis: .horizontal, width: width, in: tiles)
                 }
                 
-                let northTile = self.tile(for: index, axis: .vertical, width: width, in: tileIndexes)
+                let northTile = self.tile(for: index, axis: .vertical, width: width, in: tiles)
 
-                let matchedTile = self.generateMatchingTile(
+                if let matchedTile = self.generateMatchingTile(
                     westTile: westTile,
                     northTile: northTile,
-                    collection: collection,
-                    seed: self.seed != nil ? seed : nil
-                )
-                
-                if seed < tileCount {
-                    if matchedTile.value < UInt8.max {
-                        seed = matchedTile.value + 1
-                    } else {
-                        seed = 0
+                    seed: self.seed != nil ? seed : nil,
+                    in: candidates
+                ) {
+                    if let index = candidates.firstIndex(of: matchedTile) {
+                        seed = UInt8(index + 1)
+                        
+                        if seed >= candidates.count {
+                            seed = 0
+                        }
                     }
+                    
+                    tiles.append(matchedTile)
                 } else {
-                    seed = 0
+                    tiles.append(Tile.zero)
                 }
-                
-                tileIndexes.append(matchedTile)
             }
         }
         
-        return tileIndexes
+        return tiles
     }
     
-    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, collection: Wang.Collection, seed: UInt8?) -> Wang.Tile {
+    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, seed: UInt8?, in candidates: [Wang.Tile]) -> Wang.Tile? {
         if westTile == nil && northTile == nil {
             if let seed = seed {
-                return collection.tiles[Int(seed)]
+                return candidates[Int(seed)]
             } else {
-                return collection.tiles.randomElement() ?? Tile.zero
+                return candidates.randomElement()
             }
         }
         
-        var candidates: [Wang.Tile] = collection.tiles
+        var candidates = candidates
 
         if let westTile = westTile {
             candidates = self.matchingTiles(for: westTile, axis: .horizontal, collection: collection, in: candidates)
@@ -140,20 +149,20 @@ extension Wang {
         if let seed = seed {
             return candidates.first { tile in
                 tile.index >= seed
-            } ?? Tile.zero
+            } ?? candidates.first
         } else {
-            return candidates.randomElement() ?? Tile.zero
+            return candidates.randomElement()
         }
     }
     
-    internal func tile(for index: UInt, axis: Wang.Axis, width: UInt, in tileIndexes: [Wang.Tile]) -> Wang.Tile? {
+    internal func tile(for index: UInt, axis: Wang.Axis, width: UInt, in tiles: [Wang.Tile]) -> Wang.Tile? {
         guard index > 0 else { return nil }
         
         switch axis {
         case .horizontal:
-            return tileIndexes.indices.contains(Int(index) - 1) ? tileIndexes[Int(index) - 1] : nil
+            return tiles.indices.contains(Int(index) - 1) ? tiles[Int(index) - 1] : nil
         case .vertical:
-            return tileIndexes.indices.contains(Int(index) - Int(width)) ? tileIndexes[Int(index) - Int(width)] : nil
+            return tiles.indices.contains(Int(index) - Int(width)) ? tiles[Int(index) - Int(width)] : nil
         }
     }
     

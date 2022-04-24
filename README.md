@@ -4,7 +4,25 @@ Generate random (or psuedo-random) Wang tile arrays in Swift
 
 ## Usage
 
+Generate a matching random Wang tile array with given width and height using the specified collection:
 
+```swift
+import Wang
+
+let wang = Wang(width: 18, height: 12, collection: .corner)
+let result = wang.generate() // [Wang.Tile]
+        
+```
+
+Generate a matching psuedo-random Wang tile array with given width and height using the specified collection:
+
+```swift
+import Wang
+
+let wang = Wang(width: 18, height: 12, collection: .blob, seed: 42)
+let result = wang.generate() // [Wang.Tile]
+        
+```
 
 ## References
 
