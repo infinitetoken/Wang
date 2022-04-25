@@ -21,26 +21,26 @@ final class WangTests: XCTestCase {
     }
     
     func testPseudoRandomGenerate() throws {
-        let wang1 = Wang(width: 2, height: 2, collection: .corner)
+        let wang1 = Wang(width: 4, height: 4, collection: .corner)
         let result1 = wang1.generate(seed: 0)
         
         XCTAssertEqual(result1.map({ tile in
             tile.value
-        }), [2, 6, 1, 11])
-//        
-//        let wang2 = Wang(width: 4, height: 4, collection: .corner, seed: 0)
-//        let result2 = wang2.generate()
-//
-//        XCTAssertEqual(result2.map({ tile in
-//            tile.index
-//        }), [0, 1, 8, 0, 2, 4, 0, 2, 3, 12, 0, 1, 3, 12, 0, 2])
-//        
-//        let wang3 = Wang(width: 6, height: 6, collection: .blob, seed: 0)
-//        let result3 = wang3.generate()
-//
-//        XCTAssertEqual(result3.map({ tile in
-//            tile.index
-//        }), [0, 1, 2, 6, 3, 15, 0, 1, 4, 7, 3, 15, 0, 1, 4, 1, 15, 0, 1, 4, 1, 15, 0, 1, 3, 3, 15, 0, 1, 4, 3, 10, 1, 15, 0, 1])
+        }), [2, 6, 4, 3, 5, 11, 14, 5, 14, 7, 13, 8, 13, 9, 8, 2])
+        
+        let wang2 = Wang(width: 4, height: 4, collection: .corner)
+        let result2 = wang2.generate(seed: 0)
+
+        XCTAssertEqual(result2.map({ tile in
+            tile.index
+        }), [2, 6, 4, 3, 5, 11, 14, 5, 14, 7, 13, 8, 13, 9, 8, 2])
+     
+        let wang3 = Wang(width: 4, height: 4, collection: .blob)
+        let result3 = wang3.generate(seed: 0)
+
+        XCTAssertEqual(result3.map({ tile in
+            tile.index
+        }), [2, 6, 3, 8, 4, 10, 8, 12, 8, 13, 13, 6, 13, 13, 6, 5])
     }
     
     func testZeroTile() throws {
