@@ -34,6 +34,20 @@ public struct Wang: Identifiable, Equatable, Codable {
     
     // MARK: - Structs
     
+    internal struct Generator: RandomNumberGenerator {
+        
+        internal init(seed: Int) {
+            srand48(seed)
+        }
+        
+        internal func next() -> UInt64 {
+            return withUnsafeBytes(of: drand48()) { bytes in
+                bytes.load(as: UInt64.self)
+            }
+        }
+        
+    }
+    
     public struct Tile: Identifiable, Equatable {
         public var index: UInt8
         public var value: UInt8
@@ -57,39 +71,32 @@ public struct Wang: Identifiable, Equatable, Codable {
     public var collection: Wang.Collection
     public var height: UInt
     public var id: UUID = UUID()
-    public var seed: UInt8? = nil
     public var width: UInt
     
     // MARK: - Lifecycle
     
-    public init(width: UInt, height: UInt, collection: Wang.Collection, seed: UInt8? = nil) {
+    public init(width: UInt, height: UInt, collection: Wang.Collection) {
         self.collection = collection
         self.height = height
         self.width = width
-        self.seed = seed
     }
     
 }
 
 extension Wang {
     
-    public func generate() -> [Wang.Tile] {
-        self.generate(width: self.width, height: self.height, collection: self.collection)
+    public func generate(seed: Int? = nil) -> [Wang.Tile] {
+        self.generate(width: self.width, height: self.height, collection: self.collection, seed: seed)
     }
 
-    internal func generate(width: UInt, height: UInt, collection: Wang.Collection) -> [Wang.Tile] {
+    internal func generate(width: UInt, height: UInt, collection: Wang.Collection, seed: Int? = nil) -> [Wang.Tile] {
         var tiles: [Wang.Tile] = []
         
         let candidates = collection.tiles
-        var seed: UInt8 = 0
+        var generator: Wang.Generator = Wang.Generator(seed: 0)
         
-        if let initialSeed = self.seed {
-            switch collection {
-            case .blob:
-                seed = initialSeed % 48
-            case .corner, .edge:
-                seed = initialSeed % 16
-            }
+        if let seed = seed {
+            generator = Wang.Generator(seed: seed)
         }
         
         for row in 0..<height {
@@ -107,17 +114,10 @@ extension Wang {
                 if let matchedTile = self.generateMatchingTile(
                     westTile: westTile,
                     northTile: northTile,
-                    seed: self.seed != nil ? seed : nil,
+                    generator: &generator,
+                    psuedoRandom: seed != nil,
                     in: candidates
                 ) {
-                    if let index = candidates.firstIndex(of: matchedTile) {
-                        seed = UInt8(index + 1)
-                        
-                        if seed >= candidates.count {
-                            seed = 0
-                        }
-                    }
-                    
                     tiles.append(matchedTile)
                 } else {
                     tiles.append(Tile.zero)
@@ -128,10 +128,10 @@ extension Wang {
         return tiles
     }
     
-    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, seed: UInt8?, in candidates: [Wang.Tile]) -> Wang.Tile? {
+    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, generator: inout Wang.Generator, psuedoRandom: Bool, in candidates: [Wang.Tile]) -> Wang.Tile? {
         if westTile == nil && northTile == nil {
-            if let seed = seed {
-                return candidates[Int(seed)]
+            if psuedoRandom {
+                return candidates.randomElement(using: &generator)
             } else {
                 return candidates.randomElement()
             }
@@ -146,12 +146,8 @@ extension Wang {
             candidates = self.matchingTiles(for: northTile, axis: .vertical, collection: collection, in: candidates)
         }
 
-        if let seed = seed {
-            return candidates.first { tile in
-                tile.index >= seed
-            } ?? candidates.first { tile in
-                tile.index >= 0
-            }
+        if psuedoRandom {
+            return candidates.randomElement(using: &generator)
         } else {
             return candidates.randomElement()
         }
