@@ -17,11 +17,11 @@ public struct Wang: Identifiable, Equatable, Codable {
         case vertical
     }
     
-    public enum Cardinal {
-        case north
-        case east
-        case south
-        case west
+    public enum Cardinal: String, Codable, CaseIterable {
+        case north = "North"
+        case east = "East"
+        case south = "South"
+        case west = "West"
     }
     
     public enum Collection: String, Codable, CaseIterable {
@@ -46,7 +46,7 @@ public struct Wang: Identifiable, Equatable, Codable {
         
     }
     
-    public struct Tile: Identifiable, Equatable {
+    public struct Tile: Codable, Identifiable, Equatable {
         public var index: UInt8
         public var value: UInt8
         
