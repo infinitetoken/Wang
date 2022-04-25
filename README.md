@@ -19,8 +19,8 @@ Generate a matching pseudo-random Wang tile array with given width and height us
 ```swift
 import Wang
 
-let wang = Wang(width: 18, height: 12, collection: .blob, seed: 42)
-let result = wang.generate() // [Wang.Tile]
+let wang = Wang(width: 18, height: 12, collection: .blob)
+let result = wang.generate(seed: 42) // [Wang.Tile]
         
 ```
 
