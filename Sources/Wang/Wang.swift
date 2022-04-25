@@ -149,6 +149,8 @@ extension Wang {
         if let seed = seed {
             return candidates.first { tile in
                 tile.index >= seed
+            } ?? candidates.first { tile in
+                tile.index >= 0
             }
         } else {
             return candidates.randomElement()
