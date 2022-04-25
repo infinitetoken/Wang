@@ -41,9 +41,7 @@ public struct Wang: Identifiable, Equatable, Codable {
         }
         
         internal func next() -> UInt64 {
-            return withUnsafeBytes(of: drand48()) { bytes in
-                bytes.load(as: UInt64.self)
-            }
+            return UInt64(drand48() * Double(UInt64.max))
         }
         
     }
@@ -115,7 +113,7 @@ extension Wang {
                     westTile: westTile,
                     northTile: northTile,
                     generator: &generator,
-                    psuedoRandom: seed != nil,
+                    pseudoRandom: seed != nil,
                     in: candidates
                 ) {
                     tiles.append(matchedTile)
@@ -128,9 +126,9 @@ extension Wang {
         return tiles
     }
     
-    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, generator: inout Wang.Generator, psuedoRandom: Bool, in candidates: [Wang.Tile]) -> Wang.Tile? {
+    internal func generateMatchingTile(westTile: Wang.Tile?, northTile: Wang.Tile?, generator: inout Wang.Generator, pseudoRandom: Bool, in candidates: [Wang.Tile]) -> Wang.Tile? {
         if westTile == nil && northTile == nil {
-            if psuedoRandom {
+            if pseudoRandom {
                 return candidates.randomElement(using: &generator)
             } else {
                 return candidates.randomElement()
@@ -146,7 +144,7 @@ extension Wang {
             candidates = self.matchingTiles(for: northTile, axis: .vertical, collection: collection, in: candidates)
         }
 
-        if psuedoRandom {
+        if pseudoRandom {
             return candidates.randomElement(using: &generator)
         } else {
             return candidates.randomElement()

@@ -20,13 +20,13 @@ final class WangTests: XCTestCase {
         XCTAssertEqual(result3.count, 64)
     }
     
-    func testPsuedoRandomGenerate() throws {
-        let wang1 = Wang(width: 4, height: 4, collection: .edge)
-        let result1 = wang1.generate(seed: Int.random(in: 0..<244444))
+    func testPseudoRandomGenerate() throws {
+        let wang1 = Wang(width: 2, height: 2, collection: .corner)
+        let result1 = wang1.generate(seed: 0)
         
         XCTAssertEqual(result1.map({ tile in
             tile.value
-        }), [0, 1, 2, 8])
+        }), [2, 6, 1, 11])
 //        
 //        let wang2 = Wang(width: 4, height: 4, collection: .corner, seed: 0)
 //        let result2 = wang2.generate()

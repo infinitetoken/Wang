@@ -1,6 +1,6 @@
 # Wang
 
-Generate random (or psuedo-random) Wang tile arrays in Swift
+Generate random (or pseudo-random) Wang tile arrays in Swift
 
 ## Usage
 
@@ -14,7 +14,7 @@ let result = wang.generate() // [Wang.Tile]
         
 ```
 
-Generate a matching psuedo-random Wang tile array with given width and height using the specified collection:
+Generate a matching pseudo-random Wang tile array with given width and height using the specified collection:
 
 ```swift
 import Wang
