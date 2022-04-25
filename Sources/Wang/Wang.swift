@@ -149,7 +149,7 @@ extension Wang {
         if let seed = seed {
             return candidates.first { tile in
                 tile.index >= seed
-            } ?? candidates.first
+            }
         } else {
             return candidates.randomElement()
         }
